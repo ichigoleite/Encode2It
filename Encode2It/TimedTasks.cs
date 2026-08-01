@@ -33,42 +33,18 @@ public class TimedTasks
         while (true)
         {
             logger.Info("Listing loop start!");
-            // Go though all sources.
-            List<Listing> listings = [];
 
-            foreach (ListingInputConfigClass input in config.config.InputConfig.ListingInputs.ListingInputs)
-            {
-                if (input.Type == "mist_v1")
-                {
-                    logger.Info("Generating listings from Mist Streaming V1 input...");
-                    listings.AddRange(await listingsInputs.MistStreaming(input.Value));
-                    logger.Info("Finished generating listings from Mist Streaming V1 input.");
-                }
-                else if (input.Type == "xmltv")
-                {
-                    logger.Info("Generating listings from XMLTV input...");
-                    listings.AddRange(await listingsInputs.XMLTV(input.Value));
-                    logger.Info("Finished generating listings from XMLTV input.");
-                }
-                else
-                {
-                    logger.Warn($"Unknown type {input.Type}! Skipping...");
-                }
-            }
-
-            logger.Info("Sorting listings...");
-            // Sort listings.
-            listings = [.. listings.OrderBy(listing => listing.Callsign).OrderBy(listing => listing.ChannelNumber)];
-            logger.Info("Sorted!");
+            HttpClient client = new();
+            string content = await client.GetStringAsync("https://api.mistweather.com/api/delimited.del");
 
             logger.Info("Writing down data...");
             // Now write!
             string path = Path.Join(config.config.HeadendConfig.Path, "/OnCable/EXPORT", config.config.HeadendConfig.Id, DateTime.Now.ToString("MMddyyyy") + ".del");
             logger.Debug("Path: " + path);
-            string fileContent = new Listings() { Listing = listings }.Generate();
-            logger.Debug("File Content:\n" + fileContent);
 
-            File.WriteAllText(path, fileContent);
+            logger.Debug("File Content:\n" + content);
+
+            File.WriteAllText(path, content);
             logger.Info("Wrote down!");
             logger.Info($"Now waiting for {config.config.TimingConfig.ListingInt} ms. for next loop...");
 
