@@ -35,7 +35,7 @@ public class TimedTasks
             logger.Info("Listing loop start!");
 
             HttpClient client = new();
-            string content = await client.GetStringAsync("https://api.mistweather.com/api/delimited.del");
+            string content = await client.GetStringAsync("https://api.mistweather.com/api/delimited.del?timezone=" + TimeZoneInfo.Local.Id);
 
             logger.Info("Writing down data...");
             // Now write!
