@@ -53,6 +53,55 @@ public class Listing
 public class Listings
 {
     public List<Listing> Listing { get; set; } = [];
+    public void Read(Delimited delimited)
+    {
+        foreach (string[] line in delimited.Lines)
+        {
+            try
+            {
+                Listing.Add(new()
+                {
+                    ChannelNumber = Convert.ToInt32(line[0]),
+                    Time = DateTime.Parse(line[1] + line[2]),
+                    Callsign = line[3],
+                    Duration = Convert.ToInt32(line[4]),
+                    Titles = [
+                        line[5],
+                        line[6],
+                        line[7],
+                        line[8],
+                        line[9]
+                    ],
+                    Episode = line[10],
+                    UnknownA = line[11],
+                    StarRating = line[12].Length,
+                    Year = line[13],
+                    ProgramType = (ListingTypes)Convert.ToInt32(line[14]),
+                    Category = line[15],
+                    Actor = line[16],
+                    RatingA = line[17],
+                    RatingAdvisories = line[18],
+                    Description = line[19],
+                    Subtitles = line[20],
+                    Subtitle = line[21],
+                    UnknownB = line[23],
+                    RatingB = line[24],
+                    UnknownC = line[25],
+                    Country = line[26],
+                    TMSId = line[27],
+                    UnknownD = line[28],
+                    IsHD = line[29] == "Y" ? true : false,
+                    SubCh = line[30]
+
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error trying to parse delimited as Listing: " + e.ToString());
+            }
+
+        }
+    }
     public string Generate()
     {
         Delimited delimited = new();

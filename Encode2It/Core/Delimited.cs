@@ -5,6 +5,24 @@ public class Delimited
     // An array of string arrays. Each string array is a line, and each line contains values.
     public string[][] Lines { get; set; } = [];
 
+    // Read delimited.
+    public void Read(string content)
+    {
+        List<string[]> lines = [];
+
+        foreach (string lineString in content.Split("\n"))
+        {
+            List<string> line = [];
+            foreach (string value in lineString.Split("|"))
+            {
+                line.Add(value);
+            }
+            lines.Add([.. line]);
+        }
+        Lines = [.. lines];
+
+    }
+
     // Generate!
     public string Generate()
     {
