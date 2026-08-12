@@ -105,6 +105,33 @@ public class ListingsInputs
         }
     }
 
+    public async Task<List<Listing>> Zap2ItDelimited(string api)
+    {
+        try
+        {
+            HttpClient client = new();
+            HttpResponseMessage response = await client.GetAsync(api);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            Delimited publicChannels = new Delimited();
+            publicChannels.Read(responseBody);
+
+            Listings listings = new();
+            listings.Read(publicChannels);
+
+            return listings.Listing;
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Unable to grab Zap2It data: " + ex.ToString());
+            var edi = ExceptionDispatchInfo.Capture(ex);
+            edi.Throw();
+            return [];
+        }
+    }
+
     public async Task<List<Listing>> XMLTV(string path)
     {
         // Code taken from example: https://github.com/eddami/XmlTvSharp/tree/main

@@ -7,13 +7,13 @@ namespace Encode2It.Schemas.Core;
 public class ListingInputConfigClass
 {
     [XmlAnyElement(Name = "TypeComment")]
-    public XmlComment TypeComment { get { return new XmlDocument().CreateComment("\n            This sets the type of input this is.\n            Values:\n              - mist_v1\n              - xmltv\n        "); } set { } }
+    public XmlComment TypeComment { get { return new XmlDocument().CreateComment("\n            This sets the type of input this is.\n            Values:\n              - mist_v1\n              - xmltv\n              - zap2it\n        "); } set { } }
 
     [XmlElement(ElementName = "Type")]
     public string Type { get; set; } = "INSERT_TYPE_HERE";
 
     [XmlAnyElement(Name = "ValueComment")]
-    public XmlComment ValueComment { get { return new XmlDocument().CreateComment("\n            This sets the value of the type (ex: api url, path to file, etc).\n            Examples:\n              - mist_v1:\n                - https://api.mistweather.com/api/public-channels\n              - xmltv:\n                - ./xmltv.xml\n        "); } set { } }
+    public XmlComment ValueComment { get { return new XmlDocument().CreateComment("\n            This sets the value of the type (ex: api url, path to file, etc).\n            Examples:\n              - mist_v1:\n                - https://api.mistweather.com/api/public-channels\n              - xmltv:\n                - ./xmltv.xml\n              - zap2it:\n                - https://example.com/delimited.del\n        "); } set { } }
 
     [XmlElement(ElementName = "Value")]
     public string Value { get; set; } = "INSERT_VALUE_HERE";
