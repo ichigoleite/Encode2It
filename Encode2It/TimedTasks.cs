@@ -106,7 +106,7 @@ public class TimedTasks
             if (weatherInput.Type == "openmeteo")
             {
                 logger.Info("Generating weather data from Open-Meteo input...");
-                weatherDataset = await weatherInputs.OpenMeteoWx(weatherInput.Value, weatherInput.KeyEnabled, weatherInput.Key, weatherInput.Latitude, weatherInput.Longitude);
+                weatherDataset = await weatherInputs.OpenMeteoWx(weatherInput.Value, weatherInput.KeyEnabled, weatherInput.Key, weatherInput.Latitude, weatherInput.Longitude, weatherInput.LocationName, config.config.HeadendConfig.Id);
                 logger.Info("Finished generating weather data from Open-Meteo input.");
             }
             else

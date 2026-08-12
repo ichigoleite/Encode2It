@@ -272,7 +272,7 @@ public class WeatherInputs
         }
     }
 
-    public async Task<WeatherDataset> OpenMeteoWx(string api, bool keyenabled, string key, double latitude, double longitude)
+    public async Task<WeatherDataset> OpenMeteoWx(string api, bool keyenabled, string key, double latitude, double longitude, string name, string id)
     {
         try
         {
@@ -294,6 +294,8 @@ public class WeatherInputs
                 {
                     WxInfo = new()
                     {
+                        HeadendId = id,
+                        Location = name,
                         Temperature = (int)wxData.current.temperature_2m,
                         Condition = wxData.current.is_day == 1 ? OpenMeteo2WxDay[wxData.current.weather_code] : OpenMeteo2WxNight[wxData.current.weather_code],
                         Pressure = wxData.current.surface_pressure / 33.8639,
@@ -305,18 +307,24 @@ public class WeatherInputs
                 {
                     WxInfo = [
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 Temperature = (int)((wxData.daily.temperature_2m_max[0] + wxData.daily.temperature_2m_min[0]) / 2),
                                 LowTemp = (int)wxData.daily.temperature_2m_min[0],
                                 HighTemp = (int)wxData.daily.temperature_2m_max[0],
                                 DaypartTag = GenerateDaypartDayTag(wxData.daily.time[0]),
                             },
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 Temperature = (int)((wxData.daily.temperature_2m_max[1] + wxData.daily.temperature_2m_min[1]) / 2),
                                 LowTemp = (int)wxData.daily.temperature_2m_min[1],
                                 HighTemp = (int)wxData.daily.temperature_2m_max[1],
                                 DaypartTag = GenerateDaypartDayTag(wxData.daily.time[1]),
                             },
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 Temperature = (int)((wxData.daily.temperature_2m_max[2] + wxData.daily.temperature_2m_min[2]) / 2),
                                 LowTemp = (int)wxData.daily.temperature_2m_min[2],
                                 HighTemp = (int)wxData.daily.temperature_2m_max[2],
@@ -328,6 +336,8 @@ public class WeatherInputs
                 {
                     WxInfo = [
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[0],
                                 HighTemp = (int)wxData.hourly.temperature_2m[0],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[0]),
@@ -335,6 +345,8 @@ public class WeatherInputs
                                 Condition = wxData.hourly.is_day[0] == 1 ? OpenMeteo2WxDay[wxData.hourly.weather_code[0]] : OpenMeteo2WxNight[wxData.hourly.weather_code[0]]
                             },
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[3],
                                 HighTemp = (int)wxData.hourly.temperature_2m[3],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[3]),
@@ -342,6 +354,8 @@ public class WeatherInputs
                                 Condition = wxData.hourly.is_day[3] == 1 ? OpenMeteo2WxDay[wxData.hourly.weather_code[3]] : OpenMeteo2WxNight[wxData.hourly.weather_code[3]]
                             },
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[7],
                                 HighTemp = (int)wxData.hourly.temperature_2m[7],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[7]),
@@ -349,6 +363,8 @@ public class WeatherInputs
                                 Condition = wxData.hourly.is_day[7] == 1 ? OpenMeteo2WxDay[wxData.hourly.weather_code[7]] : OpenMeteo2WxNight[wxData.hourly.weather_code[7]]
                             },
                             new() {
+                                HeadendId = id,
+                        Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[11],
                                 HighTemp = (int)wxData.hourly.temperature_2m[11],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[11]),
