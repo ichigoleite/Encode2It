@@ -308,7 +308,7 @@ public class WeatherInputs
                     WxInfo = [
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 Temperature = (int)((wxData.daily.temperature_2m_max[0] + wxData.daily.temperature_2m_min[0]) / 2),
                                 LowTemp = (int)wxData.daily.temperature_2m_min[0],
                                 HighTemp = (int)wxData.daily.temperature_2m_max[0],
@@ -316,7 +316,7 @@ public class WeatherInputs
                             },
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 Temperature = (int)((wxData.daily.temperature_2m_max[1] + wxData.daily.temperature_2m_min[1]) / 2),
                                 LowTemp = (int)wxData.daily.temperature_2m_min[1],
                                 HighTemp = (int)wxData.daily.temperature_2m_max[1],
@@ -324,7 +324,7 @@ public class WeatherInputs
                             },
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 Temperature = (int)((wxData.daily.temperature_2m_max[2] + wxData.daily.temperature_2m_min[2]) / 2),
                                 LowTemp = (int)wxData.daily.temperature_2m_min[2],
                                 HighTemp = (int)wxData.daily.temperature_2m_max[2],
@@ -337,7 +337,7 @@ public class WeatherInputs
                     WxInfo = [
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[0],
                                 HighTemp = (int)wxData.hourly.temperature_2m[0],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[0]),
@@ -346,7 +346,7 @@ public class WeatherInputs
                             },
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[3],
                                 HighTemp = (int)wxData.hourly.temperature_2m[3],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[3]),
@@ -355,7 +355,7 @@ public class WeatherInputs
                             },
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[7],
                                 HighTemp = (int)wxData.hourly.temperature_2m[7],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[7]),
@@ -364,7 +364,7 @@ public class WeatherInputs
                             },
                             new() {
                                 HeadendId = id,
-                        Location = name,
+                                Location = name,
                                 LowTemp = (int)wxData.hourly.temperature_2m[11],
                                 HighTemp = (int)wxData.hourly.temperature_2m[11],
                                 DaypartTag = GenerateDaypartHourlyTag(wxData.hourly.time[11]),
