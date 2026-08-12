@@ -82,9 +82,9 @@ public class CurrentConditions
                 WxInfo.Temperature.ToString(),
                 WxInfo.Condition.Condition,
                 WxInfo.WindDirection,
-                WxInfo.Condition.Icon.ToString(),
+                ((int)WxInfo.Condition.Icon).ToString(),
                 WxInfo.HighTemp.ToString(),
-                WxInfo.Pressure.ToString(),
+                ((int)WxInfo.Pressure).ToString(),
                 WxInfo.LowTemp.ToString(),
                 WxInfo.Temperature.ToString()
             ]
