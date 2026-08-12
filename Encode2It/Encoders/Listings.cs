@@ -62,7 +62,7 @@ public class Listings
                 Listing.Add(new()
                 {
                     ChannelNumber = Convert.ToInt32(line[0]),
-                    Time = DateTime.Parse(line[1] + line[2]),
+                    Time = DateTime.Parse(line[1] + " " + line[2]),
                     Callsign = line[3],
                     Duration = Convert.ToInt32(line[4]),
                     Titles = [
