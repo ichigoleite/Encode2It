@@ -29,11 +29,55 @@ public class ListingsInputs
 
             foreach (XmlTvChannel channel in result.Channels)
             {
+                bool foundNum = false;
+                bool foundID = false;
                 string channelId = (channel.Id.Split(".").FirstOrDefault() ?? "").ToUpper();
+                int num = number;
+                if (channel.DisplayNames.Count() > 0)
+                {
+                    foreach (XmlTvLocalizedText xmlTv in channel.DisplayNames)
+                    {
+                        string[] spiltText = xmlTv.Value.Split(" ");
+
+                        if (spiltText.Length >= 2)
+                        {
+                            if (!foundNum)
+                            {
+                                if (Int32.TryParse(spiltText[0], out num))
+                                {
+                                    foundNum = true;
+                                    foundID = true;
+                                    channelId = spiltText[1].Replace(" ", "").ToUpper();
+                                }
+                                else
+                                {
+                                    foundID = true;
+                                    channelId = xmlTv.Value.Replace(" ", "").ToUpper();
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            if (!foundID)
+                            {
+                                channelId = xmlTv.Value.Replace(" ", "").ToUpper();
+                            }
+
+                        }
+
+                    }
+                }
+
                 channelId = channelId.Length > 6 ? channelId.Substring(0, 6) : channelId;
-                string[] names = [number.ToString(), (channel.Id.Split(".").FirstOrDefault() ?? "").ToUpper()];
+
+                string[] names = [num.ToString(), channelId];
                 channels[channel.Id] = names;
-                number += 1;
+                if (foundNum)
+                {
+                    number += 1;
+                }
+
             }
 
             List<Listing> listings = [];
