@@ -15,7 +15,7 @@ public class ListingInputConfigClass
         """
                 This sets the type of input this is.
                 Values:
-                    - mist_v1
+                    - mist_v1 (DEPRECATED! Use zap2it_url with value https://api.mistlive.tv/api/delimited.del)
                     - xmltv
                     - xmltv_url
                     - zap2it
@@ -38,7 +38,7 @@ public class ListingInputConfigClass
                 This sets the value of the type (ex: api url, path to file, etc).
                 Examples:
                     - mist_v1:
-                        - https://api.mistweather.com/api/public-channels
+                        - https://api.mistlive.tv/api/public-channels
                     - xmltv:                
                         - ./xmltv.xml 
                     - xmltv_url:                
