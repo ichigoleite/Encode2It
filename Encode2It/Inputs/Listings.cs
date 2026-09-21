@@ -61,6 +61,11 @@ public class ListingsInputs
                     }
                 }
 
+                if (episodeNum == -1)
+                {
+                    episodeNum = 0;
+                }
+
                 string[] starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? ["5", "5"];
                 float starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
 
