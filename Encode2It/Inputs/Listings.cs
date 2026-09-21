@@ -5,12 +5,18 @@ using System.Text.Json;
 using XmlTvSharp;
 using System.Runtime.ExceptionServices;
 using XmlTvSharp.Models;
+using AnyAscii;
 
 namespace Encode2It.Inputs;
 
 public class ListingsInputs
 {
     private readonly Logger Log = new("Inputs - Listing");
+    private string StringCleaner(string str)
+    {
+        // Remove newlines and |. Transliterate Unicode characters.
+        return str.Replace("|", "").Replace(Environment.NewLine, "").Transliterate();
+    }
     public async Task<List<Listing>> MistStreaming(string api)
     {
         try
@@ -72,19 +78,19 @@ public class ListingsInputs
                     listings.Add(new()
                     {
                         ChannelNumber = publicChannel.channel_number ?? -1,
-                        Callsign = publicChannel.channel_id.ToUpper(),
+                        Callsign = StringCleaner(publicChannel.channel_id.ToUpper()),
                         Duration = 72000,
                         Titles = [
-                            (publicChannel.title ?? publicChannel.channel_id.ToUpper()),
+                            StringCleaner(publicChannel.title ?? publicChannel.channel_id.ToUpper()),
                             "",
                             "",
-                            publicChannel.channel_id.ToUpper(),
+                            StringCleaner(publicChannel.channel_id.ToUpper()),
                             ""
                         ],
                         Subtitle = "",
                         RatingA = "",
                         ProgramType = type,
-                        Description = publicChannel.channel_description ?? "",
+                        Description = StringCleaner(publicChannel.channel_description ?? ""),
                         Category = ((publicChannel.channel_category ?? [""]).Length == 0 ? [""] : (publicChannel.channel_category ?? [""]))[0]
                     });
                 }
@@ -187,18 +193,18 @@ public class ListingsInputs
                 listings.Add(new()
                 {
                     ChannelNumber = Convert.ToInt16(channels[program.ChannelId][0]),
-                    Callsign = channels[program.ChannelId][1],
+                    Callsign = StringCleaner(channels[program.ChannelId][1]),
                     Time = program.Start.ToDateTimeOffset().UtcDateTime,
                     Duration = (int)(program.Length?.Value ?? (int)(program.Stop != null ? (program.Stop.ToDateTimeOffset() - program.Start.ToDateTimeOffset()).TotalSeconds : 60)),
-                    Titles = [program.Titles.FirstOrDefault()?.Value ?? "Unknown Program", "", "", "", ""],
-                    RatingA = program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR",
-                    Subtitle = program.SubTitles.FirstOrDefault()?.Value ?? "",
-                    Description = program.Descriptions.FirstOrDefault()?.Value ?? "",
-                    Country = program.Countries.FirstOrDefault()?.Value ?? "",
-                    Category = program.Categories.FirstOrDefault()?.Value ?? "",
+                    Titles = [StringCleaner(program.Titles.FirstOrDefault()?.Value ?? "Unknown Program"), "", "", "", ""],
+                    RatingA = StringCleaner(program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR"),
+                    Subtitle = StringCleaner(program.SubTitles.FirstOrDefault()?.Value ?? ""),
+                    Description = StringCleaner(program.Descriptions.FirstOrDefault()?.Value ?? ""),
+                    Country = StringCleaner(program.Countries.FirstOrDefault()?.Value ?? ""),
+                    Category = StringCleaner(program.Categories.FirstOrDefault()?.Value ?? ""),
                     StarRating = (int)starrating,
-                    Episode = episodeNum.ToString(),
-                    TMSId = zap2it_epi,
+                    Episode = StringCleaner(episodeNum.ToString()),
+                    TMSId = StringCleaner(zap2it_epi),
                 });
             }
 
@@ -271,18 +277,18 @@ public class ListingsInputs
                 listings.Add(new()
                 {
                     ChannelNumber = Convert.ToInt16(channels[program.ChannelId][0]),
-                    Callsign = channels[program.ChannelId][1],
+                    Callsign = StringCleaner(channels[program.ChannelId][1]),
                     Time = program.Start.ToDateTimeOffset().UtcDateTime,
                     Duration = (int)(program.Length?.Value ?? (int)(program.Stop != null ? (program.Stop.ToDateTimeOffset() - program.Start.ToDateTimeOffset()).TotalSeconds : 60)),
-                    Titles = [program.Titles.FirstOrDefault()?.Value ?? "Unknown Program", "", "", "", ""],
-                    RatingA = program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR",
-                    Subtitle = program.SubTitles.FirstOrDefault()?.Value ?? "",
-                    Description = program.Descriptions.FirstOrDefault()?.Value ?? "",
-                    Country = program.Countries.FirstOrDefault()?.Value ?? "",
-                    Category = program.Categories.FirstOrDefault()?.Value ?? "",
+                    Titles = [StringCleaner(program.Titles.FirstOrDefault()?.Value ?? "Unknown Program"), "", "", "", ""],
+                    RatingA = StringCleaner(program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR"),
+                    Subtitle = StringCleaner(program.SubTitles.FirstOrDefault()?.Value ?? ""),
+                    Description = StringCleaner(program.Descriptions.FirstOrDefault()?.Value ?? ""),
+                    Country = StringCleaner(program.Countries.FirstOrDefault()?.Value ?? ""),
+                    Category = StringCleaner(program.Categories.FirstOrDefault()?.Value ?? ""),
                     StarRating = (int)starrating,
-                    Episode = episodeNum.ToString(),
-                    TMSId = zap2it_epi,
+                    Episode = StringCleaner(episodeNum.ToString()),
+                    TMSId = StringCleaner(zap2it_epi),
                 });
             }
 
