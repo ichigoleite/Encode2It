@@ -80,6 +80,8 @@ public class ListingsInputs
 
             }
 
+            List<string> channelswprograms = [];
+
             List<Listing> listings = [];
             foreach (XmlTvProgramme program in result.Programmes)
             {
@@ -129,6 +131,38 @@ public class ListingsInputs
                     Episode = StringCleaner(episodeNum.ToString()),
                     TMSId = StringCleaner(zap2it_epi),
                 });
+
+                if (!channelswprograms.Contains(program.ChannelId))
+                {
+                    channelswprograms.Add(program.ChannelId);
+                }
+            }
+
+            // Add listings for channels without programs
+            foreach (XmlTvChannel channel in result.Channels)
+            {
+                if (!channelswprograms.Contains(channel.Id))
+                {
+                    listings.Add(new()
+                    {
+                        ChannelNumber = Convert.ToInt16(channels[channel.Id][0]),
+                        Callsign = StringCleaner(channels[channel.Id][1]),
+                        Duration = 72000,
+                        Titles = [
+                            StringCleaner(channel.DisplayNames.FirstOrDefault()?.Value ?? channels[channel.Id][1]),
+                            "",
+                            "",
+                            StringCleaner(channels[channel.Id][1]),
+                            ""
+                        ],
+                        Subtitle = "",
+                        RatingA = "",
+                        ProgramType = ListingTypes.Invisible,
+                        Description = "",
+                        Category = ""
+                    });
+                }
+
             }
 
             return listings;
