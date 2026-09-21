@@ -12,7 +12,7 @@
     <PackageReference Include="AnyAscii" Version="0.3.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.5" />
-    <PackageReference Include="XmlTvSharp" Version="1.1.2" />
+    <PackageReference Include="XmlTvSharp" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

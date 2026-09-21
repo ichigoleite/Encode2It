@@ -4,6 +4,7 @@ using Encode2It.Schemas.Inputs.Listing;
 using System.Text.Json;
 using XmlTvSharp;
 using System.Runtime.ExceptionServices;
+using XmlTvSharp.Models;
 
 namespace Encode2It.Inputs;
 
@@ -135,77 +136,153 @@ public class ListingsInputs
     public async Task<List<Listing>> XMLTV(string path)
     {
         // Code taken from example: https://github.com/eddami/XmlTvSharp/tree/main
-        // Cancellation token
-        var cancellationToken = new CancellationToken();
-
-        // Customize the parsing behaviour
-        var settings = new XmlTvReaderSettings();
 
         // Read all TV channels and programmes asynchronously
-        var result = await XmlTvReader.ReadAllAsync(path, settings, cancellationToken);
+        var result = await XmlTvReader.ReadAsync(path);
 
         if (result != null)
         {
             Dictionary<string, string[]> channels = new();
             channels[string.Empty] = ["0", "UNKN"];
 
+            int number = 1;
+
             foreach (XmlTvChannel channel in result.Channels)
             {
-                string[] names = ["0", "UNKN"];
-                foreach (string? name in channel.DisplayNames.Values)
-                {
-                    if (name != null)
-                    {
-                        string[] split = name.Split(" ");
-                        if (split.Length == 2)
-                        {
-                            if (Convert.ToDouble(split[0]) != 0)
-                            {
-                                names[0] = split[0];
-                            }
-                            names[1] = split[1];
-                        }
-                        else
-                        {
-                            names[1] = name;
-                        }
-                    }
-                }
+                string channelId = (channel.Id.Split(".").FirstOrDefault() ?? "").ToUpper();
+                channelId = channelId.Length > 6 ? channelId.Substring(0, 6) : channelId;
+                string[] names = [number.ToString(), (channel.Id.Split(".").FirstOrDefault() ?? "").ToUpper()];
                 channels[channel.Id] = names;
-                Console.WriteLine(channel.Id + ": " + names[0] + "/" + names[1]);
+                number += 1;
             }
 
             List<Listing> listings = [];
             foreach (XmlTvProgramme program in result.Programmes)
             {
-                int onscreen_epi = 0;
                 string zap2it_epi = "";
-                foreach (XmlTvEpisode episode in program.Episodes ?? [])
+                int episodeNum = -1;
+
+                foreach (XmlTvEpisodeNumber epiNum in program.EpisodeNumbers)
                 {
-                    if (episode.System == "onscreen")
+                    if (epiNum.System == "xmltv_ns")
                     {
-                        onscreen_epi = Convert.ToInt16(episode.Value);
+                        if (episodeNum == -1)
+                        {
+                            string[] splitnum = (epiNum.Value ?? "").Split("/").First().Split(".");
+                            episodeNum = splitnum.Length >= 2 ? Convert.ToInt32(splitnum[0]) + 1 : 0;
+                        }
                     }
-                    else if (episode.System == "dd_progid")
+                    else if (epiNum.System == "dd_progid")
                     {
-                        zap2it_epi = episode.Value ?? "";
+                        if (zap2it_epi == "")
+                        {
+                            zap2it_epi = epiNum.Value ?? "";
+                        }
                     }
                 }
+
+                string[] starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? ["5", "5"];
+                float starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
+
                 listings.Add(new()
                 {
                     ChannelNumber = Convert.ToInt16(channels[program.ChannelId][0]),
                     Callsign = channels[program.ChannelId][1],
-                    Time = program.Start.DateTime,
-                    Duration = (int)(program.Stop.ToUnixTimeSeconds() - program.Start.ToUnixTimeSeconds()),
-                    Titles = [program.Titles.Values.First(), "", "", "", ""],
-                    Subtitle = (program.SubTitles ?? new Dictionary<string, string>() { { "en", "" } }).Values.First(),
-                    Description = (program.Descriptions ?? new Dictionary<string, string>() { { "en", "" } }).Values.First(),
-                    Actor = string.Join(", ", program.Actors ?? [""]),
-                    Country = (program.Countries ?? [""]).First(),
-                    Category = (program.Categories ?? [""]).First(),
-                    StarRating = (int)Convert.ToDouble(program.StarRating ?? "0"),
-                    Episode = onscreen_epi.ToString(),
-                    TMSId = zap2it_epi
+                    Time = program.Start.ToDateTimeOffset().UtcDateTime,
+                    Duration = (int)(program.Length?.Value ?? (int)(program.Stop != null ? (program.Stop.ToDateTimeOffset() - program.Start.ToDateTimeOffset()).TotalSeconds : 60)),
+                    Titles = [program.Titles.FirstOrDefault()?.Value ?? "Unknown Program", "", "", "", ""],
+                    RatingA = program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR",
+                    Subtitle = program.SubTitles.FirstOrDefault()?.Value ?? "",
+                    Description = program.Descriptions.FirstOrDefault()?.Value ?? "",
+                    Country = program.Countries.FirstOrDefault()?.Value ?? "",
+                    Category = program.Categories.FirstOrDefault()?.Value ?? "",
+                    StarRating = (int)starrating,
+                    Episode = episodeNum.ToString(),
+                    TMSId = zap2it_epi,
+                });
+            }
+
+            return listings;
+        }
+        else
+        {
+            Log.Error("Unable to parse XMLTV");
+            return [];
+        }
+
+    }
+
+    public async Task<List<Listing>> XMLTVHTTP(string url)
+    {
+        // Code taken from example: https://github.com/eddami/XmlTvSharp/tree/main
+
+        // Grab XMLTV
+        HttpClient http = new();
+        var response = await http.GetAsync(url);
+        StringReader reader = new(await response.Content.ReadAsStringAsync());
+
+        // Read all TV channels and programmes asynchronously
+        var result = await XmlTvReader.ReadAsync(reader);
+
+        if (result != null)
+        {
+            Dictionary<string, string[]> channels = new();
+            channels[string.Empty] = ["0", "UNKN"];
+
+            int number = 1;
+
+            foreach (XmlTvChannel channel in result.Channels)
+            {
+                string channelId = (channel.Id.Split(".").FirstOrDefault() ?? "").ToUpper();
+                channelId = channelId.Length > 6 ? channelId.Substring(0, 6) : channelId;
+                string[] names = [number.ToString(), (channel.Id.Split(".").FirstOrDefault() ?? "").ToUpper()];
+                channels[channel.Id] = names;
+                number += 1;
+            }
+
+            List<Listing> listings = [];
+            foreach (XmlTvProgramme program in result.Programmes)
+            {
+                string zap2it_epi = "";
+                int episodeNum = -1;
+
+                foreach (XmlTvEpisodeNumber epiNum in program.EpisodeNumbers)
+                {
+                    if (epiNum.System == "xmltv_ns")
+                    {
+                        if (episodeNum == -1)
+                        {
+                            string[] splitnum = (epiNum.Value ?? "").Split("/").First().Split(".");
+                            episodeNum = splitnum.Length >= 2 ? Convert.ToInt32(splitnum[0]) + 1 : 0;
+                        }
+                    }
+                    else if (epiNum.System == "dd_progid")
+                    {
+                        if (zap2it_epi == "")
+                        {
+                            zap2it_epi = epiNum.Value ?? "";
+                        }
+                    }
+                }
+
+                string[] starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? ["5", "5"];
+                float starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
+
+                listings.Add(new()
+                {
+                    ChannelNumber = Convert.ToInt16(channels[program.ChannelId][0]),
+                    Callsign = channels[program.ChannelId][1],
+                    Time = program.Start.ToDateTimeOffset().UtcDateTime,
+                    Duration = (int)(program.Length?.Value ?? (int)(program.Stop != null ? (program.Stop.ToDateTimeOffset() - program.Start.ToDateTimeOffset()).TotalSeconds : 60)),
+                    Titles = [program.Titles.FirstOrDefault()?.Value ?? "Unknown Program", "", "", "", ""],
+                    RatingA = program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR",
+                    Subtitle = program.SubTitles.FirstOrDefault()?.Value ?? "",
+                    Description = program.Descriptions.FirstOrDefault()?.Value ?? "",
+                    Country = program.Countries.FirstOrDefault()?.Value ?? "",
+                    Category = program.Categories.FirstOrDefault()?.Value ?? "",
+                    StarRating = (int)starrating,
+                    Episode = episodeNum.ToString(),
+                    TMSId = zap2it_epi,
                 });
             }
 
