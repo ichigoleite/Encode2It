@@ -186,7 +186,31 @@ public class ListingsInputs
         }
     }
 
-    public async Task<List<Listing>> Zap2ItDelimited(string api)
+    public async Task<List<Listing>> Zap2ItDelimited(string path)
+    {
+        try
+        {
+            string contents = File.ReadAllText(path);
+
+            Delimited publicChannels = new Delimited();
+            publicChannels.Read(contents);
+
+            Listings listings = new();
+            listings.Read(publicChannels);
+
+            return listings.Listing;
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Unable to grab Zap2It data: " + ex.ToString());
+            var edi = ExceptionDispatchInfo.Capture(ex);
+            edi.Throw();
+            return [];
+        }
+    }
+
+    public async Task<List<Listing>> Zap2ItDelimitedURL(string api)
     {
         try
         {
