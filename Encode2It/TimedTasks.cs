@@ -56,6 +56,12 @@ public class TimedTasks
                     listings.AddRange(await listingsInputs.Zap2ItDelimited(input.Value));
                     logger.Info("Finished generating listings from Zap2It Delimited input.");
                 }
+                else if (input.Type == "xmltv_url")
+                {
+                    logger.Info("Generating listings from XMLTV (URL) input...");
+                    listings.AddRange(await listingsInputs.XMLTVHTTP(input.Value));
+                    logger.Info("Finished generating listings from XMLTV (URL) Delimited input.");
+                }
                 else
                 {
                     logger.Warn($"Unknown type {input.Type}! Skipping...");
