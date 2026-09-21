@@ -242,7 +242,7 @@ public class ListingsInputs
         // Code taken from example: https://github.com/eddami/XmlTvSharp/tree/main
 
         // Read all TV channels and programmes asynchronously
-        var result = await XmlTvReader.ReadAsync(path);
+        var result = await XmlTvReader.ReadAsync(path, new XmlTvReaderOptions { UnknownElementHandling = XmlTvUnknownContentHandling.Ignore, UnknownAttributeHandling = XmlTvUnknownContentHandling.Ignore });
 
         return XMLTVProcess(result);
 
@@ -258,7 +258,7 @@ public class ListingsInputs
         StringReader reader = new(await response.Content.ReadAsStringAsync());
 
         // Read all TV channels and programmes asynchronously
-        var result = await XmlTvReader.ReadAsync(reader);
+        var result = await XmlTvReader.ReadAsync(reader, new XmlTvReaderOptions { UnknownElementHandling = XmlTvUnknownContentHandling.Ignore, UnknownAttributeHandling = XmlTvUnknownContentHandling.Ignore });
 
 
         return XMLTVProcess(result);
