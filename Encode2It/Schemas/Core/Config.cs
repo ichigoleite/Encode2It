@@ -7,13 +7,50 @@ namespace Encode2It.Schemas.Core;
 public class ListingInputConfigClass
 {
     [XmlAnyElement(Name = "TypeComment")]
-    public XmlComment TypeComment { get { return new XmlDocument().CreateComment("\n            This sets the type of input this is.\n            Values:\n              - mist_v1\n              - xmltv\n              - zap2it\n        "); } set { } }
+    public XmlComment TypeComment
+    {
+        get
+        {
+            return new XmlDocument().CreateComment(
+        """
+                This sets the type of input this is.
+                Values:
+                    - mist_v1
+                    - xmltv
+                    - xmltv_url
+                    - zap2it
+                    - zap2it_url        
+        """);
+        }
+        set { }
+    }
 
     [XmlElement(ElementName = "Type")]
     public string Type { get; set; } = "INSERT_TYPE_HERE";
 
     [XmlAnyElement(Name = "ValueComment")]
-    public XmlComment ValueComment { get { return new XmlDocument().CreateComment("\n            This sets the value of the type (ex: api url, path to file, etc).\n            Examples:\n              - mist_v1:\n                - https://api.mistweather.com/api/public-channels\n              - xmltv:\n                - ./xmltv.xml\n              - zap2it:\n                - https://example.com/delimited.del\n        "); } set { } }
+    public XmlComment ValueComment
+    {
+        get
+        {
+            return new XmlDocument().CreateComment(
+        """
+                This sets the value of the type (ex: api url, path to file, etc).
+                Examples:
+                    - mist_v1:
+                        - https://api.mistweather.com/api/public-channels
+                    - xmltv:                
+                        - ./xmltv.xml 
+                    - xmltv_url:                
+                        - https://example.com/xmltv.xml  
+                    - zap2it:                
+                        - delimited.del            
+                    - zap2it_url:                
+                        - https://example.com/delimited.del
+        """);
+        }
+        set { }
+    }
 
     [XmlElement(ElementName = "Value")]
     public string Value { get; set; } = "INSERT_VALUE_HERE";
