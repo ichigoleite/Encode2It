@@ -20,7 +20,7 @@ Console.WriteLine("""
 
 """);
 Console.WriteLine($"Version {versioninfo[0]} - {versioninfo[1]}");
-Console.WriteLine("Made by PicelBoi");
+Console.WriteLine("Made by ichigoleite");
 Console.WriteLine("-----------------------------------------------------------------------");
 Console.WriteLine("\n");
 

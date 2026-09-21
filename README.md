@@ -1,6 +1,6 @@
 # Encode2It
 
-![Encode2It Logo](https://raw.githubusercontent.com/PicelBoi/Encode2It/refs/heads/main/Branding/Encode2ItLogo.svg)
+![Encode2It Logo](https://raw.githubusercontent.com/ichigoleite/Encode2It/refs/heads/main/Branding/Encode2ItLogo.svg)
 
 An encoder for the Zap2It cable guide.
 
