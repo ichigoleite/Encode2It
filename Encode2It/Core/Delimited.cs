@@ -12,12 +12,16 @@ public class Delimited
 
         foreach (string lineString in content.Split("\n"))
         {
-            List<string> line = [];
-            foreach (string value in lineString.Split("|"))
+            if (!(lineString == ""))
             {
-                line.Add(value);
+                List<string> line = [];
+                foreach (string value in lineString.Split("|"))
+                {
+                    line.Add(value);
+                }
+                lines.Add([.. line]);
             }
-            lines.Add([.. line]);
+
         }
         Lines = [.. lines];
 
