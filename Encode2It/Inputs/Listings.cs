@@ -85,7 +85,7 @@ public class ListingsInputs
 
                 string[] names = [num.ToString(), channelId];
                 channels[channel.Id] = names;
-                if (foundNum)
+                if (!foundNum)
                 {
                     number += 1;
                 }
