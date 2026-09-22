@@ -18,6 +18,11 @@ public class ListingsInputs
         return str.Replace("|", "").Replace(Environment.NewLine, "").Transliterate();
     }
 
+    private static string[] MovieCategories = ["movie"];
+    private static string[] KidsCategories = "kids|family|children|childrens|disney".Split("|");
+    private static string[] SportsCategories = "sports|basketball|baseball|football".Split("|");
+    private static string[] NewsCategories = "news|talk|information|weather|shopping|journalism|documentary|current affairs".Split("|");
+
     private List<Listing> XMLTVProcess(XmlTvDocument result)
     {
         if (result != null)
@@ -108,6 +113,7 @@ public class ListingsInputs
             {
                 string zap2it_epi = "";
                 string? onscreen = null;
+                ListingTypes type = ListingTypes.Default;
 
                 foreach (XmlTvEpisodeNumber epiNum in program.EpisodeNumbers)
                 {
@@ -124,7 +130,38 @@ public class ListingsInputs
                     }
                 }
 
+                foreach (XmlTvLocalizedText category in program.Categories)
+                {
+                    foreach (string test in NewsCategories)
+                    {
+                        if (category.Value.ToLower().Contains(test))
+                        {
+                            type = ListingTypes.News;
+                        }
+                    }
+                    foreach (string test in SportsCategories)
+                    {
+                        if (category.Value.ToLower().Contains(test))
+                        {
+                            type = ListingTypes.Sports;
+                        }
+                    }
+                    foreach (string test in KidsCategories)
+                    {
+                        if (category.Value.ToLower().Contains(test))
+                        {
+                            type = ListingTypes.Kids;
+                        }
+                    }
+                    foreach (string test in MovieCategories)
+                    {
+                        if (category.Value.ToLower().Contains(test))
+                        {
+                            type = ListingTypes.Movies;
+                        }
+                    }
 
+                }
 
                 string[]? starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? null;
                 float? starrating = null;
@@ -149,6 +186,7 @@ public class ListingsInputs
                     Category = StringCleaner(program.Categories.FirstOrDefault()?.Value ?? ""),
                     StarRating = (int)(starrating ?? 0),
                     Episode = onscreen ?? "",
+                    ProgramType = type
                 });
 
                 if (!channelswprograms.Contains(program.ChannelId))
