@@ -124,8 +124,13 @@ public class ListingsInputs
                     episodeNum = 0;
                 }
 
-                string[] starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? ["5", "5"];
-                float starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
+                string[]? starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? null;
+                float? starrating = null;
+                if (starratingfrac != null)
+                {
+                    starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
+                }
+
 
                 listings.Add(new()
                 {
@@ -139,7 +144,7 @@ public class ListingsInputs
                     Description = StringCleaner(program.Descriptions.FirstOrDefault()?.Value ?? ""),
                     Country = StringCleaner(program.Countries.FirstOrDefault()?.Value ?? ""),
                     Category = StringCleaner(program.Categories.FirstOrDefault()?.Value ?? ""),
-                    StarRating = (int)starrating,
+                    StarRating = (int)(starrating ?? 0),
                     Episode = StringCleaner(episodeNum.ToString()),
                     TMSId = StringCleaner(zap2it_epi),
                 });
