@@ -59,11 +59,23 @@ public class ListingsInputs
                         }
                         else
                         {
-                            if (!foundID)
+                            int tempNum = 0;
+                            if (Int32.TryParse(xmlTv.Value, out tempNum))
                             {
-                                channelId = xmlTv.Value.Replace(" ", "").ToUpper();
-                            }
+                                if (!foundNum)
+                                {
+                                    foundNum = true;
+                                    num = tempNum;
+                                }
 
+                            }
+                            else
+                            {
+                                if (!foundID)
+                                {
+                                    channelId = xmlTv.Value.Replace(" ", "").ToUpper();
+                                }
+                            }
                         }
 
                     }
