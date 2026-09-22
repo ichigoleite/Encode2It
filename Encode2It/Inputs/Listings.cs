@@ -98,6 +98,7 @@ public class ListingsInputs
             foreach (XmlTvProgramme program in result.Programmes)
             {
                 string zap2it_epi = "";
+                string? onscreen = null;
                 int episodeNum = -1;
 
                 foreach (XmlTvEpisodeNumber epiNum in program.EpisodeNumbers)
@@ -117,6 +118,10 @@ public class ListingsInputs
                             zap2it_epi = epiNum.Value ?? "";
                         }
                     }
+                    else if (epiNum.System == "onscreen")
+                    {
+                        onscreen = epiNum.Value;
+                    }
                 }
 
                 if (episodeNum == -1)
@@ -131,6 +136,7 @@ public class ListingsInputs
                     starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
                 }
 
+                string title = StringCleaner(program.Titles.FirstOrDefault()?.Value ?? "Unknown Program") + (onscreen != null ? ": " + onscreen : "");
 
                 listings.Add(new()
                 {
@@ -138,7 +144,7 @@ public class ListingsInputs
                     Callsign = StringCleaner(channels[program.ChannelId][1]),
                     Time = program.Start.ToDateTimeOffset().UtcDateTime,
                     Duration = (int)(program.Length?.Value ?? (int)(program.Stop != null ? (program.Stop.ToDateTimeOffset() - program.Start.ToDateTimeOffset()).TotalSeconds : 60)),
-                    Titles = [StringCleaner(program.Titles.FirstOrDefault()?.Value ?? "Unknown Program"), "", "", "", ""],
+                    Titles = [title, "", "", "", ""],
                     RatingA = StringCleaner(program.Ratings?.Count > 0 ? (program.Ratings.FirstOrDefault()?.Value.ToString() ?? "").Replace("|", "") : "UR"),
                     Subtitle = StringCleaner(program.SubTitles.FirstOrDefault()?.Value ?? ""),
                     Description = StringCleaner(program.Descriptions.FirstOrDefault()?.Value ?? ""),
