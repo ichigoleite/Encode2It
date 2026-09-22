@@ -152,7 +152,6 @@ public class ListingsInputs
                     Category = StringCleaner(program.Categories.FirstOrDefault()?.Value ?? ""),
                     StarRating = (int)(starrating ?? 0),
                     Episode = StringCleaner(episodeNum.ToString()),
-                    TMSId = StringCleaner(zap2it_epi),
                 });
 
                 if (!channelswprograms.Contains(program.ChannelId))
