@@ -51,9 +51,17 @@ public class ListingsInputs
                                 }
                                 else
                                 {
-                                    foundID = true;
-                                    channelId = xmlTv.Value.Replace(" ", "").ToUpper();
+                                    if (!foundID)
+                                    {
+                                        foundID = true;
+                                        channelId = xmlTv.Value.Replace(" ", "").ToUpper();
+                                    }
                                 }
+                            }
+                            else if (!foundID)
+                            {
+                                foundID = true;
+                                channelId = xmlTv.Value.Replace(" ", "").ToUpper();
                             }
 
                         }
@@ -73,6 +81,7 @@ public class ListingsInputs
                             {
                                 if (!foundID)
                                 {
+                                    foundID = true;
                                     channelId = xmlTv.Value.Replace(" ", "").ToUpper();
                                 }
                             }
