@@ -99,19 +99,10 @@ public class ListingsInputs
             {
                 string zap2it_epi = "";
                 string? onscreen = null;
-                int episodeNum = -1;
 
                 foreach (XmlTvEpisodeNumber epiNum in program.EpisodeNumbers)
                 {
-                    if (epiNum.System == "xmltv_ns")
-                    {
-                        if (episodeNum == -1)
-                        {
-                            string[] splitnum = (epiNum.Value ?? "").Split("/").First().Split(".");
-                            episodeNum = splitnum.Length >= 2 ? Convert.ToInt32(splitnum[0]) + 1 : 0;
-                        }
-                    }
-                    else if (epiNum.System == "dd_progid")
+                    if (epiNum.System == "dd_progid")
                     {
                         if (zap2it_epi == "")
                         {
@@ -124,10 +115,7 @@ public class ListingsInputs
                     }
                 }
 
-                if (episodeNum == -1)
-                {
-                    episodeNum = 0;
-                }
+
 
                 string[]? starratingfrac = program.StarRatings?.FirstOrDefault()?.Value.Split("/") ?? null;
                 float? starrating = null;
@@ -136,7 +124,7 @@ public class ListingsInputs
                     starrating = starratingfrac.Length == 2 ? Convert.ToInt32(starratingfrac[0]) / Convert.ToInt32(starratingfrac[1]) * 5 : 0;
                 }
 
-                string title = StringCleaner(program.Titles.FirstOrDefault()?.Value ?? "Unknown Program") + (onscreen != null ? ": " + onscreen : "");
+                string title = StringCleaner(program.Titles.FirstOrDefault()?.Value ?? "Unknown Program");
 
                 listings.Add(new()
                 {
@@ -151,7 +139,7 @@ public class ListingsInputs
                     Country = StringCleaner(program.Countries.FirstOrDefault()?.Value ?? ""),
                     Category = StringCleaner(program.Categories.FirstOrDefault()?.Value ?? ""),
                     StarRating = (int)(starrating ?? 0),
-                    Episode = StringCleaner(episodeNum.ToString()),
+                    Episode = onscreen ?? "",
                 });
 
                 if (!channelswprograms.Contains(program.ChannelId))
